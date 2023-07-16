@@ -1,3 +1,4 @@
+import MongoStore from "connect-mongo";
 import express from "express";
 import session from "express-session";
 import morgan from "morgan";
@@ -17,9 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "hello",
-    resave: true,
-    saveUninitialized: true,
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
 
