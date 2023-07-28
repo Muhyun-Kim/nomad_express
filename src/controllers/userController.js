@@ -116,21 +116,19 @@ export const finishGithubLogin = async (req, res) => {
     }
     let user = await User.findOne({ email: emailObject.email });
     if (!user) {
-       user = await User.create({
+      user = await User.create({
         avatarUrl: userData.avatarUrl,
-        name:userData.name,
-        username:userData.login,
-        email:emailObject.email,
-        password:"",
-        socialOnly:true,
-        location:userData.location,
+        name: userData.name,
+        username: userData.login,
+        email: emailObject.email,
+        password: "",
+        socialOnly: true,
+        location: userData.location,
       });
-      
-    } 
-      req.session.loggedIn = true;
-      req.session.user = user;
-      return res.redirect("/");
-    
+    }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
@@ -138,7 +136,24 @@ export const finishGithubLogin = async (req, res) => {
 
 export const logout = (req, res) => {
   req.session.destroy();
-  return res.redirect("/")
+  return res.redirect("/");
 };
-export const edit = (req, res) => res.send("Edit");
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+};
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { name, email, username, location },
+  } = req;
+  await User.findByIdAndUpdate(_id, {
+    name,
+    email,
+    username,
+    location,
+  });
+  return res.render("edit-profile");
+};
 export const see = (req, res) => res.send("see");
